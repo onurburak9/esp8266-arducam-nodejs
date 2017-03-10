@@ -53,7 +53,7 @@ body {overflow-x: hidden; font-family: "";}
  function connect(){
 
     window.WebSocket = window.WebSocket || window.MozWebSocket;
-    var socket = new WebSocket("ws://rcteer.swastibhat.com:8080");
+    var socket = new WebSocket("ws://rcteer.swastibhat.com:8081");
 
      socket.addEventListener("open", function(event) {
           console.log( "Connected");

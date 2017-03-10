@@ -13,7 +13,7 @@ var requestObject;
 /*
  *   start server
  */
-var server = app.listen(8080, function() {
+var server = app.listen(8081, function() {
     var host = server.address().address
     var port = server.address().port
     console.log("Node Js app listening at http://" + host + port);
