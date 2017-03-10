@@ -58,7 +58,7 @@ wsServer.on('request', function(request) {
                 console.log(requestObject.write(message.utf8Data, function() {
                     console.log('Write succesful-header');
                     for (var i = 0; i < clients.length; i++) {
-                        clients[i].sendUTF("Thanks!");
+                        clients[i].sendUTF(message.utf8Data);
                     }
                     //connection.sendUTF("MERABA");
 
@@ -70,6 +70,9 @@ wsServer.on('request', function(request) {
             if (getRequestTriggered) {
                 console.log(requestObject.write(message.binaryData, function() {
                     console.log('Write succesful-image');
+                    for (var i = 0; i < clients.length; i++) {
+                        clients[i].sendBytes(message.utf8Data);
+                    }
                 }))
             }
         } else {
