@@ -50,7 +50,7 @@ wsServer.on('request', function(request) {
             console.log('1-Received Message: ' + message.utf8Data);
             if (getRequestTriggered) {
                 //requestObject.write("--frame\r\n");
-                //requestObject.write("\r\n");
+                requestObject.write("\r\n");
                 console.log(requestObject.write(message.utf8Data, function() {
                     console.log('Write succesful-header');
                 }))
