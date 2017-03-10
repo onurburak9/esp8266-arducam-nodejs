@@ -30,7 +30,7 @@ app.get('/viewImage', function(request, response) {
             'Expires': '-1',
             'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0, post-check=0, pre-check=0, false',
             'Pragma': 'no-cache',
-            'Content-Type': 'multipart/x-mixed-replace; boundary=--frame'
+            'Content-Type': 'multipart/x-mixed-replace; boundary=frameFRAMEframe'
         });
     response.useChunkedEncodingByDefault = false;
     getRequestTriggered = true;
@@ -49,8 +49,8 @@ wsServer.on('request', function(request) {
         if (message.type === 'utf8') {
             console.log('1-Received Message: ' + message.utf8Data);
             if (getRequestTriggered) {
-                requestObject.write("--frame\r\n");
-                requestObject.write("\r\n");
+                //requestObject.write("--frame\r\n");
+                //requestObject.write("\r\n");
                 console.log(requestObject.write(message.utf8Data, function() {
                     console.log('Write succesful-header');
                 }))
