@@ -98,7 +98,7 @@ function fixBinary (bin) {
     console.log('returned content-type is: ' + xhr.getResponseHeader('Content-Type'));
     console.log('returned content-length is: ' + xhr.getResponseHeader('Content-Length'));
     
-    var returnedBlob = new Blob([xhr.response], {type: 'image/png'});
+    var returnedBlob = new Blob([xhr.response], {type: 'image/jpeg'});
     var reader = new FileReader();
     reader.onload = function(e) {
       var returnedURL = e.target.result;
