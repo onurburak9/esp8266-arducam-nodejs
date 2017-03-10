@@ -76,7 +76,7 @@ function fixBinary (bin) {
           var urlObj = window.URL || window.webkitURL;
           //var imageUrl = urlCreator.createObjectURL(event.data);
           if(typeof event.data != "string"){
-             var binary = fixBinary(event.data);
+             var binary = atob(event.data);
               var blob = new Blob([binary], {type: 'image/jpeg'});
               var url = URL.createObjectURL(blob);
               console.log(blob)
@@ -103,8 +103,6 @@ function fixBinary (bin) {
     reader.onload = function(e) {
       var returnedURL = e.target.result;
       var returnedBase64 = returnedURL.replace(/^[^,]+,/, '');
-      console.log('xhr.response (in base64) is: ' + returnedBase64);
-      console.log('is this the expected base64? ' + (returnedBase64 === base64));
     };
     reader.readAsDataURL(blob); //Convert the blob from clipboard to base64
   };
