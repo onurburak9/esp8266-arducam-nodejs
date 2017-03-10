@@ -51,7 +51,9 @@ body {overflow-x: hidden; font-family: "微软雅黑";}
   }
 
   $('.open').on("click",function (){
-    var socket = new WebSocket("ws://rcteer.swastibhat.com", "echo");
+
+    window.WebSocket = window.WebSocket || window.MozWebSocket;
+    var socket = new WebSocket("ws://rcteer.swastibhat.com");
 
      socket.addEventListener("open", function(event) {
           console.log( "Connected");

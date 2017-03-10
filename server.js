@@ -39,7 +39,7 @@ app.get('/viewImage', function(request, response) {
 
 wsServer = new WebSocketServer({
     httpServer: server,
-    autoAcceptConnections: false
+    autoAcceptConnections: true
 });
 
 wsServer.on('request', function(request) {
