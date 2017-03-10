@@ -72,14 +72,14 @@ function fixBinary (bin) {
         socket.addEventListener("message", function(event) {
           console.log(typeof event.data);
           console.log(event.data);
+          event.data.type='image/jpeg';
 
           var urlObj = window.URL || window.webkitURL;
           //var imageUrl = urlCreator.createObjectURL(event.data);
           if(typeof event.data != "string"){
-             var binary = atob(event.data);
-              var blob = new Blob([binary], {type: 'image/jpeg'});
+              var blob =  event.data;
               var url = URL.createObjectURL(blob);
-              console.log(blob)
+              console.log(blob);
               console.log('Created a png blob of size: ' + blob.size);
               console.log('Inserting an img...');
               document.querySelector("#image").src = url;
