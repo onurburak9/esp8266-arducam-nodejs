@@ -75,7 +75,7 @@ function fixBinary (bin) {
           var urlObj = window.URL || window.webkitURL;
           //var imageUrl = urlCreator.createObjectURL(event.data);
           if(typeof event.data != "string"){
-             var binary = fixBinary(atob(event.data));
+             var binary = fixBinary(event.data);
               var blob = new Blob([binary], {type: 'image/jpeg'});
               var url = URL.createObjectURL(blob);
               console.log(blob)
