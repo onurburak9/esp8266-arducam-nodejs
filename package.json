@@ -8,8 +8,7 @@
     "start": "node server.js"
   },
   "author": "oby",
-  "license": "ISC"
-
+  "license": "ISC",
   "dependencies": {
     "express": "^4.15.2",
     "forever": "^0.15.3",
