@@ -64,7 +64,7 @@ body {overflow-x: hidden; font-family: "";}
           console.log(typeof event.data);
           console.log(event.data);
 
-         // var urlCreator = window.URL || window.webkitURL;
+          var urlObj = window.URL || window.webkitURL;
           //var imageUrl = urlCreator.createObjectURL(event.data);
 
           var blobUrl = urlObj.createObjectURL(new Blob([this.response], {type : 'image/jpeg'}));
