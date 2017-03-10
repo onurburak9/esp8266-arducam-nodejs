@@ -67,7 +67,7 @@ body {overflow-x: hidden; font-family: "";}
           var urlObj = window.URL || window.webkitURL;
           //var imageUrl = urlCreator.createObjectURL(event.data);
 
-          var blobUrl = urlObj.createObjectURL(new Blob([this.response], {type : 'image/jpeg'}));
+          var blobUrl = urlObj.createObjectURL(new Blob([event.data], {type : 'image/jpeg'}));
           document.querySelector("#image").src = blobUrl;
           
         });
