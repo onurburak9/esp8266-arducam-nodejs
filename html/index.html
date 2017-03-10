@@ -63,6 +63,10 @@ body {overflow-x: hidden; font-family: "";}
         socket.addEventListener("message", function(event) {
           console.log("Server Says: " + event.data);
           console.log(event);
+
+          var urlCreator = window.URL || window.webkitURL;
+          var imageUrl = urlCreator.createObjectURL(event.data);
+          document.querySelector("#image").src = imageUrl;
           
         });
 
