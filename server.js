@@ -47,6 +47,8 @@ wsServer.on('request', function(request) {
 
     var connection = request.accept('', request.origin);
     console.log((new Date()) + ' Connection accepted.');
+
+    connection.sendUTF("ONURBURAK");
     connection.on('message', function(message) {
         if (message.type === 'utf8') {
             console.log('1-Received Message: ' + message.utf8Data);
