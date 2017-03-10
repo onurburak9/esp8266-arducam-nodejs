@@ -55,20 +55,20 @@ wsServer.on('request', function(request) {
             if (getRequestTriggered) {
                 //requestObject.write("--frame\r\n");
                 requestObject.write("\r\n");
-                //console.log(requestObject.write(message.utf8Data, function() {
+                console.log(requestObject.write(message.utf8Data, function() {
                     //console.log('Write succesful-header');
                     for (var i = 0; i < clients.length; i++) {
                         clients[i].sendUTF(message.utf8Data);
                     }
                     //connection.sendUTF("MERABA");
 
-                }))
+                }));
             }
             connection.sendUTF("text received");
         } else if (message.type === 'binary') {
             //console.log('2-Received Binary Message of ' + message.binaryData.length + ' bytes');
             if (getRequestTriggered) {
-                //console.log(requestObject.write(message.binaryData, function() {
+                console.log(requestObject.write(message.binaryData, function() {
                     //console.log('Write succesful-image');
                     for (var i = 0; i < clients.length; i++) {
                         var byteArray = new Uint8Array(message.binaryData);
