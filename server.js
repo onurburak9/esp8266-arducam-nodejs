@@ -51,7 +51,7 @@ wsServer.on('request', function(request) {
     clients.push(connection);
     connection.on('message', function(message) {
         if (message.type === 'utf8') {
-            //console.log('1-Received Message: ' + message.utf8Data);
+           // console.log('1-Received Message: ' + message.utf8Data);
             if (getRequestTriggered) {
                 //requestObject.write("--frame\r\n");
                 requestObject.write("\r\n");
@@ -81,7 +81,7 @@ wsServer.on('request', function(request) {
                 }))
             }
         } else {
-            //console.log("3-Received some data = " + message)
+            console.log("3-Received some data = " + message)
         }
 
 
