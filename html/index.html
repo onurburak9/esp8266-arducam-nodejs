@@ -30,7 +30,7 @@ body {overflow-x: hidden; font-family: "微软雅黑";}
     $.get("http://" + $("#cameraIP").val() + "/?plen=" +
      $("#cameraPLEN").val() + "&ql=" + ql + "&t=" + Math.random(), function(result){
       console.log(result);
-      console.log(rresult.indexOf("Server is running!"));
+      console.log(result.indexOf("Server is running!"));
       $("input[name='captureBtn']").addClass("disabled");
       if (result.indexOf("Server is running!") == -1){
         alert("Please input the correct 'Camera IP Address'!");
@@ -114,7 +114,7 @@ body {overflow-x: hidden; font-family: "微软雅黑";}
 
 
   </div>
-  <a class="waves-effect waves-light btn" onclick="capture(8)">SOCKET</a>
+  <a class="waves-effect waves-light btn open" onclick="capture(8)">SOCKET</a>
 </div>
 </body>
 </html>
