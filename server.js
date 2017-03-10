@@ -24,7 +24,7 @@ app.use('/', express.static("html"));
 
 app.get('/viewImage', function(request, response) {
     console.log("Request received from : /viewImage");
-    response.setHeader("content-Type", "multipart/x-mixed-replace; boundary=--frame\r\n\r\n");
+    response.setHeader("content-Type", "multipart/x-mixed-replace; boundary=frameFRAMEframe\r\n\r\n");
     // response.writeHead(200, {
     //     'Connection': 'Close',
     //     'Expires': '-1',
