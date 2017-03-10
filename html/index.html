@@ -50,10 +50,10 @@ body {overflow-x: hidden; font-family: "";}
     });
   }
 
-  $('.open').on("click",function (){
+ function connect(){
 
     window.WebSocket = window.WebSocket || window.MozWebSocket;
-    var socket = new WebSocket("ws://rcteer.swastibhat.com");
+    var socket = new WebSocket("ws://rcteer.swastibhat.com:8080");
 
      socket.addEventListener("open", function(event) {
           console.log( "Connected");
@@ -73,7 +73,7 @@ body {overflow-x: hidden; font-family: "";}
           open.disabled = false;
           console.log( "Not Connected");
         });
-  });
+  };
 </script>
 <div class="container">
   <div class="row">
@@ -116,7 +116,7 @@ body {overflow-x: hidden; font-family: "";}
 
 
   </div>
-  <a class="waves-effect waves-light btn open" >SOCKET</a>
+  <a class="waves-effect waves-light btn open" onclick="connect()">SOCKET</a>
 </div>
 </body>
 </html>
