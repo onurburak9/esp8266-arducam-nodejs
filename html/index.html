@@ -51,6 +51,7 @@ body {overflow-x: hidden; font-family: "";}
   }
 function fixBinary (bin) {
     var length = bin.length;
+    console.log(length);
     var buf = new ArrayBuffer(length);
     var arr = new Uint8Array(buf);
     for (var i = 0; i < length; i++) {
@@ -83,8 +84,8 @@ function fixBinary (bin) {
               console.log('Inserting an img...');
               document.querySelector("#image").src = url;
 
-                log('Blob URL is: ' + url);
-  log('Fetching with ajax...');
+                console.log('Blob URL is: ' + url);
+  console.log('Fetching with ajax...');
   
   var xhr = new XMLHttpRequest();
   xhr.open('GET', url);
@@ -93,17 +94,17 @@ function fixBinary (bin) {
     if (xhr.readyState !== 4) {
       return;
     }
-    log('xhr.status is: ' + xhr.status);
-    log('returned content-type is: ' + xhr.getResponseHeader('Content-Type'));
-    log('returned content-length is: ' + xhr.getResponseHeader('Content-Length'));
+    console.log('xhr.status is: ' + xhr.status);
+    console.log('returned content-type is: ' + xhr.getResponseHeader('Content-Type'));
+    console.log('returned content-length is: ' + xhr.getResponseHeader('Content-Length'));
     
     var returnedBlob = new Blob([xhr.response], {type: 'image/png'});
     var reader = new FileReader();
     reader.onload = function(e) {
       var returnedURL = e.target.result;
       var returnedBase64 = returnedURL.replace(/^[^,]+,/, '');
-      log('xhr.response (in base64) is: ' + returnedBase64);
-      log('is this the expected base64? ' + (returnedBase64 === base64));
+      console.log('xhr.response (in base64) is: ' + returnedBase64);
+      console.log('is this the expected base64? ' + (returnedBase64 === base64));
     };
     reader.readAsDataURL(blob); //Convert the blob from clipboard to base64
   };
