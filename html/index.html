@@ -36,7 +36,7 @@ body {overflow-x: hidden; font-family: "微软雅黑";}
           $(o).removeClass("disabled");
         });
       }else{
-        $("#capturePic").attr("src", "http://" + $("#cameraIP").val() + "/stream");
+        $("#capturePic").attr("src", "http://" + $("#cameraIP").val() + "/viewImage");
         if (ql<4) {
           $("#capturePic").attr("width", "640");
           $("#capturePic").attr("height", "480");
