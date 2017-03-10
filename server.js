@@ -24,7 +24,7 @@ app.use('/', express.static("html"));
 
 app.get('/viewImage', function(request, response) {
     console.log("Request received from : /viewImage");
-    response.setHeader("content-Type", "multipart/x-mixed-replace; boundary=frame");
+    response.setHeader("content-Type", "multipart/x-mixed-replace; boundary=--frame\r\n\r\n");
     response.useChunkedEncodingByDefault = false;
     getRequestTriggered = true;
     requestObject = response;
@@ -42,23 +42,23 @@ wsServer.on('request', function(request) {
         if (message.type === 'utf8') {
             console.log('1-Received Message: ' + message.utf8Data);
             if (getRequestTriggered) {
-                requestObject.write(message.utf8Data, function() {
+                console.log(requestObject.write(message.utf8Data, function() {
                     console.log('Write succesful-header');
-                });
+                }))
             }
             connection.sendUTF("text received");
         } else if (message.type === 'binary') {
             console.log('2-Received Binary Message of ' + message.binaryData.length + ' bytes');
             if (getRequestTriggered) {
-                requestObject.write(message.binaryData, function() {
+                console.log(requestObject.write(message.binaryData, function() {
                     console.log('Write succesful-image');
-                });
+                }))
             }
         } else {
             console.log("3-Received some data = " + message)
         }
 
-        
+
     });
     connection.on('close', function(reasonCode, description) {
         console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
