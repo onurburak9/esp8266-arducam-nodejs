@@ -71,7 +71,7 @@ wsServer.on('request', function(request) {
                 console.log(requestObject.write(message.binaryData, function() {
                     console.log('Write succesful-image');
                     for (var i = 0; i < clients.length; i++) {
-                        var byteArray = new Uint8Array(arrayBuffer);
+                        var byteArray = new Uint8Array(message.binaryData);
                         for (var x = 0; x < byteArray.byteLength; x++) {
                             clients[i].sendBytes(byteArray[x]);
                         }
