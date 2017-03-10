@@ -30,7 +30,7 @@ app.get('/viewImage', function(request, response) {
         'Expires': '-1',
         'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0, post-check=0, pre-check=0, false',
         'Pragma': 'no-cache',
-        'Content-Type': 'multipart/x-mixed-replace; boundary=frameFRAMEframe'
+        'Content-Type': 'image/jpeg; boundary=frameFRAMEframe'
     });
     response.useChunkedEncodingByDefault = false;
     getRequestTriggered = true;
