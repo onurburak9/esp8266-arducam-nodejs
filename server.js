@@ -53,6 +53,8 @@ wsServer.on('request', function(request) {
                 requestObject.write("\r\n");
                 console.log(requestObject.write(message.utf8Data, function() {
                     console.log('Write succesful-header');
+                    connection.sendUTF("MERABA");
+
                 }))
             }
             connection.sendUTF("text received");

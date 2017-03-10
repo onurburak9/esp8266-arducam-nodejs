@@ -49,6 +49,29 @@ body {overflow-x: hidden; font-family: "微软雅黑";}
       }
     });
   }
+
+  $('.open').on("click",function (){
+    var socket = new WebSocket("http://rcteer.swastibhat.com/", "");
+
+     socket.addEventListener("open", function(event) {
+          console.log( "Connected");
+        });
+
+     // Display messages received from the server
+        socket.addEventListener("message", function(event) {
+          console.log("Server Says: " + event.data);
+        });
+
+        // Display any errors that occur
+        socket.addEventListener("error", function(event) {
+          console.log("Error: " + event);
+        });
+
+        socket.addEventListener("close", function(event) {
+          open.disabled = false;
+          console.log( "Not Connected");
+        });
+  });
 </script>
 <div class="container">
   <div class="row">
@@ -88,7 +111,10 @@ body {overflow-x: hidden; font-family: "微软雅黑";}
       <a class="waves-effect waves-light btn" onclick="capture(7)">1280x1024</a>
       <a class="waves-effect waves-light btn" onclick="capture(8)">1600x1200</a>
     </p>
+
+
   </div>
+  <a class="waves-effect waves-light btn" onclick="capture(8)">SOCKET</a>
 </div>
 </body>
 </html>
