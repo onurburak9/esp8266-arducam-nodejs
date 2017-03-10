@@ -61,12 +61,11 @@ body {overflow-x: hidden; font-family: "";}
 
      // Display messages received from the server
         socket.addEventListener("message", function(event) {
-          console.log("Server Says: " + event.data);
-          console.log(event);
+          console.log(event.data);
 
           var urlCreator = window.URL || window.webkitURL;
           var imageUrl = urlCreator.createObjectURL(event.data);
-          document.querySelector("#image").src = imageUrl;
+          document.querySelector("#image").src = event.data;
           
         });
 
