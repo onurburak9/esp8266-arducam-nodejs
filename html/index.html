@@ -62,6 +62,9 @@ body {overflow-x: hidden; font-family: "";}
      // Display messages received from the server
         socket.addEventListener("message", function(event) {
           console.log("Server Says: " + event.data);
+          var urlCreator = window.URL || window.webkitURL;
+   var imageUrl = urlCreator.createObjectURL(event.data);
+   document.querySelector("#image").src = imageUrl;
         });
 
         // Display any errors that occur
@@ -117,6 +120,7 @@ body {overflow-x: hidden; font-family: "";}
 
   </div>
   <a class="waves-effect waves-light btn open" onclick="connect()">SOCKET</a>
+  <img id="image"/>
 </div>
 </body>
 </html>
