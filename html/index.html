@@ -66,10 +66,46 @@ body {overflow-x: hidden; font-family: "";}
 
           var urlObj = window.URL || window.webkitURL;
           //var imageUrl = urlCreator.createObjectURL(event.data);
+          if(typeof event.data != "string"){
+             var binary = fixBinary(atob(event.data));
+              var blob = new Blob([binary], {type: 'image/jpeg'});
+              var url = URL.createObjectURL(blob);
+              console.log(blob)
+              console.log('Created a png blob of size: ' + blob.size);
+              console.log('Inserting an img...');
+              document.querySelector("#image").src = blobUrl;
 
-          var blobUrl = urlObj.createObjectURL(new Blob([event.data], {type : 'image/jpeg'}));
-          console.log(blobUrl);
-          document.querySelector("#image").src = blobUrl;
+                log('Blob URL is: ' + url);
+  log('Fetching with ajax...');
+  
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', url);
+  xhr.responseType = 'arraybuffer';
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState !== 4) {
+      return;
+    }
+    log('xhr.status is: ' + xhr.status);
+    log('returned content-type is: ' + xhr.getResponseHeader('Content-Type'));
+    log('returned content-length is: ' + xhr.getResponseHeader('Content-Length'));
+    
+    var returnedBlob = new Blob([xhr.response], {type: 'image/png'});
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var returnedURL = e.target.result;
+      var returnedBase64 = returnedURL.replace(/^[^,]+,/, '');
+      log('xhr.response (in base64) is: ' + returnedBase64);
+      log('is this the expected base64? ' + (returnedBase64 === base64));
+    };
+    reader.readAsDataURL(blob); //Convert the blob from clipboard to base64
+  };
+  xhr.send();
+          }
+         
+
+          //var blobUrl = urlObj.createObjectURL(new Blob([event.data], {type : 'image/jpeg'}));
+          //console.log(blobUrl);
+         // document.querySelector("#image").src = blobUrl;
           
         });
 
