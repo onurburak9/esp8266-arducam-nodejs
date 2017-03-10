@@ -62,10 +62,13 @@ body {overflow-x: hidden; font-family: "";}
      // Display messages received from the server
         socket.addEventListener("message", function(event) {
           console.log(typeof event.data);
+          console.log(event.data);
 
          // var urlCreator = window.URL || window.webkitURL;
           //var imageUrl = urlCreator.createObjectURL(event.data);
-          document.querySelector("#image").src = event.data;
+
+          var blobUrl = urlObj.createObjectURL(new Blob([this.response], {type : 'image/jpeg'}));
+          document.querySelector("#image").src = blobUrl;
           
         });
 
