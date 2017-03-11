@@ -70,12 +70,11 @@ wsServer.on('request', function(request) {
                 requestObject.write(message.binaryData, function() {
                     //console.log('Write succesful-image');
                     console.log(message.binaryData);
-                    
-                    for (var i = 0; i < clients.length; i++) {
-                            clients[i].sendBytes(message.binaryData);
-                        }
 
+                    for (var i = 0; i < clients.length; i++) {
+                        clients[i].sendBytes(message.binaryData);
                     }
+
                 });
             }
         } else {
