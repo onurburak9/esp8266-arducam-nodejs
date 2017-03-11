@@ -47,38 +47,40 @@ wsServer.on('request', function(request) {
 
     var connection = request.accept('', request.origin);
     console.log((new Date()) + ' Connection accepted.');
-    if(request.origin == "http://rcteer.swastibhat.com")
+    if (request.origin == "http://rcteer.swastibhat.com")
         clients.push(connection);
     connection.on('message', function(message) {
         if (message.type === 'utf8') {
-           // console.log('1-Received Message: ' + message.utf8Data);
+            // console.log('1-Received Message: ' + message.utf8Data);
             if (getRequestTriggered) {
                 //requestObject.write("--frame\r\n");
-                requestObject.write("\r\n");
-                console.log(requestObject.write(message.utf8Data, function() {
+                requestObject.write(message.utf8Data, function() {
                     //console.log('Write succesful-header');
                     for (var i = 0; i < clients.length; i++) {
                         clients[i].sendUTF(message.utf8Data);
                     }
                     //connection.sendUTF("MERABA");
 
-                }));
+                });
             }
             connection.sendUTF("text received");
         } else if (message.type === 'binary') {
             //console.log('2-Received Binary Message of ' + message.binaryData.length + ' bytes');
             if (getRequestTriggered) {
-                console.log(requestObject.write(message.binaryData, function() {
+                requestObject.write(message.binaryData, function() {
                     //console.log('Write succesful-image');
+                    console.log(message.binaryData);
                     for (var i = 0; i < clients.length; i++) {
                         var byteArray = new Uint8Array(message.binaryData);
                         for (var x = 0; x < byteArray.byteLength; x++) {
-                            var buffer = new Buffer(byteArray[x])
+                            var buffer = new Buffer(byteArray[x], {
+                                "image/jpeg"
+                            });
                             clients[i].sendBytes(buffer);
                         }
 
                     }
-                }))
+                });
             }
         } else {
             console.log("3-Received some data = " + message)
