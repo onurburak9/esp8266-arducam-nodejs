@@ -71,11 +71,14 @@ body {overflow-x: hidden; font-family: "";}
      //var imageUrl = urlCreator.createObjectURL(event.data);
      if (typeof event.data != "string") {
        var blob = event.data;
-       var url = URL.createObjectURL(blob);
+       var url = window.URL.createObjectURL(blob);
        console.log(blob);
        console.log('Created a png blob of size: ' + blob.size);
        console.log('Inserting an img...');
        document.querySelector("#image").src = url;
+       document.querySelector("#image").onload ={
+        window.URL.revokeObjectURL(this.src);
+       }
 
        console.log('Blob URL is: ' + url);
 
@@ -119,25 +122,14 @@ body {overflow-x: hidden; font-family: "";}
       If no response, please check the <b>Camera IP Address</b> above.
     </span>
   </div>
-  <div id="captureBtns" class="row center">
+  <div  class="row center">
     <p>
-      <a class="waves-effect waves-light btn" onclick="capture(0)">160x120</a>
-      <a class="waves-effect waves-light btn" onclick="capture(1)">176x144</a>
-      <a class="waves-effect waves-light btn" onclick="capture(2)">320x240</a>
-      <a class="waves-effect waves-light btn" onclick="capture(3)">352x288</a>
-      <a class="waves-effect waves-light btn" onclick="capture(4)">640x480</a>
+      
+  <a class="waves-effect waves-light btn open" onclick="connect()">SOCKET</a>
     </p>
-    <p>
-      <a class="waves-effect waves-light btn" onclick="capture(5)">800x600</a>
-      <a class="waves-effect waves-light btn" onclick="capture(6)">1024x768</a>
-      <a class="waves-effect waves-light btn" onclick="capture(7)">1280x1024</a>
-      <a class="waves-effect waves-light btn" onclick="capture(8)">1600x1200</a>
-    </p>
-
+    
 
   </div>
-  <a class="waves-effect waves-light btn open" onclick="connect()">SOCKET</a>
-  <img id="image"/>
 </div>
 </body>
 </html>
