@@ -76,7 +76,7 @@ body {overflow-x: hidden; font-family: "";}
        console.log('Created a png blob of size: ' + blob.size);
        console.log('Inserting an img...');
        document.querySelector("#image").src = url;
-       document.querySelector("#image").onload ={
+       document.querySelector("#image").onload = function(){
         window.URL.revokeObjectURL(this.src);
        }
 
