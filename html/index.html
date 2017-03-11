@@ -23,109 +23,88 @@ body {overflow-x: hidden; font-family: "";}
 </head>
 <body>
 <script type="text/javascript">
-  function capture(ql){
-    $("#captureBtns a").each(function(i, o){
-      $(o).addClass("disabled");
-    });
-    $.get("http://" + $("#cameraIP").val() + "/?plen=" +
-     $("#cameraPLEN").val() + "&ql=" + ql + "&t=" + Math.random(), function(result){
-      console.log(result);
-      console.log(result.indexOf("Server is running!"));
-      $("input[name='captureBtn']").addClass("disabled");
-      if (result.indexOf("Server is running!") == -1){
-        alert("Please input the correct 'Camera IP Address'!");
-        $("#captureBtns a").each(function(i, o){
-          $(o).removeClass("disabled");
-        });
-      }else{
-        $("#capturePic").attr("src", "http://" + $("#cameraIP").val() + "/viewImage");
-        if (ql<4) {
-          $("#capturePic").attr("width", "640");
-          $("#capturePic").attr("height", "480");
-        }else{
-          $("#capturePic").attr("width", "auto");
-          $("#capturePic").attr("height", "auto");
-        }
-      }
-    });
-  }
-function fixBinary (bin) {
-    var length = bin.length;
-    console.log(length);
-    var buf = new ArrayBuffer(length);
-    var arr = new Uint8Array(buf);
-    for (var i = 0; i < length; i++) {
-      arr[i] = bin.charCodeAt(i);
-    }
-    return buf;
-  }
- function connect(){
+  function capture(ql) {
+   $("#captureBtns a").each(function(i, o) {
+     $(o).addClass("disabled");
+   });
+   $.get("http://" + $("#cameraIP").val() + "/?plen=" +
+     $("#cameraPLEN").val() + "&ql=" + ql + "&t=" + Math.random(),
+     function(result) {
+       console.log(result);
+       console.log(result.indexOf("Server is running!"));
+       $("input[name='captureBtn']").addClass("disabled");
+       if (result.indexOf("Server is running!") == -1) {
+         alert("Please input the correct 'Camera IP Address'!");
+         $("#captureBtns a").each(function(i, o) {
+           $(o).removeClass("disabled");
+         });
+       } else {
+         $("#capturePic").attr("src", "http://" + $("#cameraIP").val() + "/viewImage");
+         if (ql < 4) {
+           $("#capturePic").attr("width", "640");
+           $("#capturePic").attr("height", "480");
+         } else {
+           $("#capturePic").attr("width", "auto");
+           $("#capturePic").attr("height", "auto");
+         }
+       }
+     });
+ }
 
-    window.WebSocket = window.WebSocket || window.MozWebSocket;
-    var socket = new WebSocket("ws://rcteer.swastibhat.com:8081");
+ function fixBinary(bin) {
+   var length = bin.length;
+   console.log(length);
+   var buf = new ArrayBuffer(length);
+   var arr = new Uint8Array(buf);
+   for (var i = 0; i < length; i++) {
+     arr[i] = bin.charCodeAt(i);
+   }
+   return buf;
+ }
 
-     socket.addEventListener("open", function(event) {
-          console.log( "Connected");
-        });
+ function connect() {
 
-     // Display messages received from the server
-        socket.addEventListener("message", function(event) {
-          console.log(typeof event.data);
-          console.log(event.data);
-          event.data.type='image/jpeg';
+   window.WebSocket = window.WebSocket || window.MozWebSocket;
+   var socket = new WebSocket("ws://rcteer.swastibhat.com:8081");
 
-          var urlObj = window.URL || window.webkitURL;
-          //var imageUrl = urlCreator.createObjectURL(event.data);
-          if(typeof event.data != "string"){
-              var blob =  event.data;
-              var url = URL.createObjectURL(blob);
-              console.log(blob);
-              console.log('Created a png blob of size: ' + blob.size);
-              console.log('Inserting an img...');
-              document.querySelector("#image").src = url;
+   socket.addEventListener("open", function(event) {
+     console.log("Connected");
+   });
 
-                console.log('Blob URL is: ' + url);
-  console.log('Fetching with ajax...');
-  
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', url);
-  xhr.responseType = 'arraybuffer';
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState !== 4) {
-      return;
-    }
-    console.log('xhr.status is: ' + xhr.status);
-    console.log('returned content-type is: ' + xhr.getResponseHeader('Content-Type'));
-    console.log('returned content-length is: ' + xhr.getResponseHeader('Content-Length'));
-    
-    var returnedBlob = new Blob([xhr.response], {type: 'image/jpeg'});
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      var returnedURL = e.target.result;
-      var returnedBase64 = returnedURL.replace(/^[^,]+,/, '');
-    };
-    reader.readAsDataURL(blob); //Convert the blob from clipboard to base64
-  };
-  xhr.send();
-          }
-         
+   // Display messages received from the server
+   socket.addEventListener("message", function(event) {
+     console.log(typeof event.data);
+     console.log(event.data);
+     event.data.type = 'image/jpeg';
 
-          //var blobUrl = urlObj.createObjectURL(new Blob([event.data], {type : 'image/jpeg'}));
-          //console.log(blobUrl);
-         // document.querySelector("#image").src = blobUrl;
-          
-        });
+     var urlObj = window.URL || window.webkitURL;
+     //var imageUrl = urlCreator.createObjectURL(event.data);
+     if (typeof event.data != "string") {
+       var blob = event.data;
+       var url = URL.createObjectURL(blob);
+       console.log(blob);
+       console.log('Created a png blob of size: ' + blob.size);
+       console.log('Inserting an img...');
+       document.querySelector("#image").src = url;
 
-        // Display any errors that occur
-        socket.addEventListener("error", function(event) {
-          console.log("Error: " + event);
-        });
+       console.log('Blob URL is: ' + url);
+       console.log('Fetching with ajax...');
 
-        socket.addEventListener("close", function(event) {
-          open.disabled = false;
-          console.log( "Not Connected");
-        });
-  };
+      
+     }
+
+   });
+
+   // Display any errors that occur
+   socket.addEventListener("error", function(event) {
+     console.log("Error: " + event);
+   });
+
+   socket.addEventListener("close", function(event) {
+     open.disabled = false;
+     console.log("Not Connected");
+   });
+ };
 </script>
 <div class="container">
   <div class="row">

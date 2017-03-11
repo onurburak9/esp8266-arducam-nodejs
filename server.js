@@ -52,31 +52,20 @@ wsServer.on('request', function(request) {
     connection.on('message', function(message) {
         if (message.type === 'utf8') {
             // console.log('1-Received Message: ' + message.utf8Data);
-            if (getRequestTriggered) {
-                //requestObject.write("--frame\r\n");
-                requestObject.write(message.utf8Data, function() {
-                    //console.log('Write succesful-header');
-                    for (var i = 0; i < clients.length; i++) {
-                        clients[i].sendUTF(message.utf8Data);
-                    }
-                    //connection.sendUTF("MERABA");
-
-                });
+            //requestObject.write("--frame\r\n");
+            for (var i = 0; i < clients.length; i++) {
+                clients[i].sendUTF(message.utf8Data);
             }
+
             connection.sendUTF("text received");
         } else if (message.type === 'binary') {
             //console.log('2-Received Binary Message of ' + message.binaryData.length + ' bytes');
-            if (getRequestTriggered) {
-                requestObject.write(message.binaryData, function() {
-                    //console.log('Write succesful-image');
-                    console.log(message.binaryData);
+            console.log(message.binaryData);
 
-                    for (var i = 0; i < clients.length; i++) {
-                        clients[i].sendBytes(message.binaryData);
-                    }
-
-                });
+            for (var i = 0; i < clients.length; i++) {
+                clients[i].sendBytes(message.binaryData);
             }
+
         } else {
             console.log("3-Received some data = " + message)
         }
