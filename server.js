@@ -73,9 +73,7 @@ wsServer.on('request', function(request) {
                     for (var i = 0; i < clients.length; i++) {
                         var byteArray = new Uint8Array(message.binaryData);
                         for (var x = 0; x < byteArray.byteLength; x++) {
-                            var buffer = new Buffer(byteArray[x], {
-                                "image/jpeg"
-                            });
+                            var buffer = new Buffer(byteArray[x]);
                             clients[i].sendBytes(buffer);
                         }
 
