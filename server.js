@@ -84,11 +84,8 @@ wsServer.on('request', function(request) {
                         clients[i].sendUTF(message.utf8Data);
                     }
                 }
-            }          
-
-            connection.sendUTF("text received");
+            } 
         } else if (message.type === 'binary') {
-            //console.log('2-Received Binary Message of ' + message.binaryData.length + ' bytes');
 
             for (var i = 0; i < clients.length; i++) {
                 clients[i].sendBytes(message.binaryData);

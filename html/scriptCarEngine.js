@@ -12,10 +12,10 @@ $(document).ready(function() {
     move(-800, -800);
   });
   $("a.left").click(function() {
-    move(-800, 800);
+    move(0, 800);
   });
   $("a.right").click(function() {
-    move(800, -800);
+    move(800, 0);
   });
 
 
