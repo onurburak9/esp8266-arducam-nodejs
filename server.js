@@ -10,6 +10,10 @@ var firstFrameHeaderSent = false;
 var getRequestTriggered = false;
 var requestObject;
 
+var left = 0
+var right = 0
+var isWorking = false;
+
 /*
  *   start server
  */
@@ -37,19 +41,19 @@ app.get('/getValues', function(req, res) {
         });
     else
         res.send({
-            left: 0,
-            right: 0
+            left: 50,
+            right: 50
         });
 });
 app.get('/reset', function(req, res) {
-            left = 0;
-            right = 0;
+    left = 0;
+    right = 0;
 
-            res.send({
-                code: 200,
-                message: 'SUCCESS'
-            });
-        });
+    res.send({
+        code: 200,
+        message: 'SUCCESS'
+    });
+});
 
 wsServer = new WebSocketServer({
     httpServer: server,
@@ -62,16 +66,25 @@ wsServer.on('request', function(request) {
     var connection = request.accept('', request.origin);
     console.log((new Date()) + ' Connection accepted.');
     if (request.origin == "http://rcteer.swastibhat.com")
-        clients.push(connection);
+    clients.push(connection);
     connection.on('message', function(message) {
-        var msg = JSON.parse(message.utf8Data);
         console.log(msg);
         if (message.type === 'utf8') {
-            // console.log('1-Received Message: ' + message.utf8Data);
-            //requestObject.write("--frame\r\n");
-            for (var i = 0; i < clients.length; i++) {
-                clients[i].sendUTF(message.utf8Data);
-            }
+            var msg = JSON.parse(message.utf8Data);
+            if (msg.cmd == "start") {
+                isWorking = true;
+            } else if (msg.cmd == "stop") {
+                isWorking = false;
+            }else{
+                if(msg.type =="engineValue"){
+                    left =Math.round(data.left) ;
+                    right =Math.round(data.right) ;
+                }else{
+                    for (var i = 0; i < clients.length; i++) {
+                        clients[i].sendUTF(message.utf8Data);
+                    }
+                }
+            }          
 
             connection.sendUTF("text received");
         } else if (message.type === 'binary') {
