@@ -64,7 +64,7 @@ $(document).ready(function() {
     if (lastMove + 200 < now) {
       lastMove = now;
       var obj = {
-        type:"engineValue"
+        type:"engineValue",
         left:left,
         right:right
       };
@@ -149,3 +149,6 @@ $(document).ready(function() {
      console.log("Not Connected");
    });
  };
+
+
+
