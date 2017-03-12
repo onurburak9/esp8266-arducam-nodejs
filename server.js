@@ -13,7 +13,8 @@ var requestObject;
 var left = 0
 var right = 0
 var isWorking = false;
-var espClient, browserClient;
+var espClient;
+var browserClient;
 /*
  *   start server
  */
