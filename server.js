@@ -77,8 +77,8 @@ wsServer.on('request', function(request) {
                 isWorking = false;
             }else{
                 if(msg.type =="engineValue"){
-                    left =Math.round(data.left) ;
-                    right =Math.round(data.right) ;
+                    left =Math.round(msg.left) ;
+                    right =Math.round(msg.right) ;
                 }else{
                     for (var i = 0; i < clients.length; i++) {
                         clients[i].sendUTF(message.utf8Data);
