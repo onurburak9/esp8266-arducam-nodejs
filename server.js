@@ -13,7 +13,7 @@ var requestObject;
 var left = 0
 var right = 0
 var isWorking = false;
-
+var espClient, browserClient;
 /*
  *   start server
  */
@@ -65,9 +65,14 @@ wsServer.on('request', function(request) {
 
     var connection = request.accept('', request.origin);
     console.log((new Date()) + ' Connection accepted.');
-    if (request.origin == "http://rcteer.swastibhat.com")
-    clients.push(connection);
-    connection.on('message', function(message) {
+    if (request.origin == "http://rcteer.swastibhat.com") {
+        clients.push(connection);
+        browserClient = connection;
+    } else{
+        espClient = connection;
+    }
+
+    browserClient.on('message', function(message) {
         console.log(message);
         if (message.type === 'utf8') {
             var msg = JSON.parse(message.utf8Data);
@@ -75,16 +80,27 @@ wsServer.on('request', function(request) {
                 isWorking = true;
             } else if (msg.cmd == "stop") {
                 isWorking = false;
-            }else{
-                if(msg.type =="engineValue"){
-                    left =Math.round(msg.left) ;
-                    right =Math.round(msg.right) ;
-                }else{
-                    for (var i = 0; i < clients.length; i++) {
-                        clients[i].sendUTF(message.utf8Data);
-                    }
+            } else {
+                if (msg.type == "engineValue") {
+                    left = Math.round(msg.left);
+                    right = Math.round(msg.right);
                 }
-            } 
+            }
+        } else {
+            console.log("Received some data = " + message)
+        }
+
+
+    });
+    espClient.on('message', function(message) {
+            console.log(message);
+            if (message.type === 'utf8') {
+
+                for (var i = 0; i < clients.length; i++) {
+                    clients[i].sendUTF(message.utf8Data);
+                }
+
+            }
         } else if (message.type === 'binary') {
 
             for (var i = 0; i < clients.length; i++) {
@@ -96,8 +112,7 @@ wsServer.on('request', function(request) {
         }
 
 
-    });
-    connection.on('close', function(reasonCode, description) {
-        console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
-    });
+    }); connection.on('close', function(reasonCode, description) {
+    console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
+});
 });
