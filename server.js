@@ -61,6 +61,8 @@ wsServer = new WebSocketServer({
     autoAcceptConnections: false
 });
 var clients = [];
+var newFrame = "";
+var firstFrame = false;
 wsServer.on('request', function(request) {
 
 
@@ -94,14 +96,25 @@ wsServer.on('request', function(request) {
         espClient.on('message', function(message) {
             console.log(message);
             if (message.type === 'utf8') {
-
+                if (newFrame) {
+                    for (var i = 0; i < clients.length; i++) {
+                        clients[i].sendBytes(newFrame);
+                    }
+                    newFrame="";
+                }
                 for (var i = 0; i < clients.length; i++) {
                     clients[i].sendUTF(message.utf8Data);
                 }
-
+                firstFrame = true;
 
             } else if (message.type === 'binary') {
 
+                if (firstFrame) {
+                    newFrame = message.binaryData;
+                    firstFrame = false;
+                } else {
+                    newFrame += message.binaryData;
+                }
                 for (var i = 0; i < clients.length; i++) {
                     clients[i].sendBytes(message.binaryData);
                 }
