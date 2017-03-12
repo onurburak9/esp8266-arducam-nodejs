@@ -109,7 +109,7 @@ $(document).ready(function() {
 function connect() {
   window.WebSocket = window.WebSocket || window.MozWebSocket;
   var url = $("#cameraIP").val();
-  socket = new WebSocket(url);
+  socket = new WebSocket("ws://rcteer.swastibhat.com:8081");
   socket.addEventListener("open", function(event) {
     console.log("Connected");
 
