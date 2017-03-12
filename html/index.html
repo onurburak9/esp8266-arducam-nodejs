@@ -13,6 +13,7 @@
     <script type="text/javascript" src="scriptCarEngine.js"></script>
     <style>
     body {overflow-x: hidden; font-family: "";}
+    .left,.right{float: none !important;}
     </style>
   </head>
   <body>
@@ -42,16 +43,19 @@
       </div>
       <div  class="row center">
         <p>
-          
-          <a class="waves-effect waves-light btn open" onclick="connect()">SOCKET</a>
+          <a class="waves-effect waves-light btn open" onclick="connect()">System Start</a>
+        </p>
+        <p>
+          <a href="#" class="start toggle">ENGINE START</a>
+          <a href="#" class="stop toggle">ENGINE STOP</a>
         </p>
         <p>
           <a href="#" class="forward">FORWARD</a>
           <a href="#" class="back">BACK</a>
           <a href="#" class="left">LEFT</a>
           <a href="#" class="right">RIGHT</a>
-          <a href="#" class="start toggle">START</a>
-          <a href="#" class="stop toggle">STOP</a>
+        </p> 
+        <p>
           <span id="dmEvent"></span>
           <span id="vector"></span>
         </p>

@@ -20,12 +20,19 @@ $(document).ready(function() {
 
 
   $("a.start").click(function() {
-    socket.send("start");
+    var obj={
+      type:"engine",
+      cmd:"start"
+    };
+    socket.send(JSON.stringify(obj));
   });
   $("a.stop").click(function() {
     move(0,0);
-    socket.send("stop");
-
+    var obj={
+      type:"engine",
+      cmd:"stop"
+    };
+    socket.send(JSON.stringify(obj));
   });
 
   //Check for if it's a mobile device or not
@@ -57,8 +64,9 @@ $(document).ready(function() {
     if (lastMove + 200 < now) {
       lastMove = now;
       var obj = {
-        left,
-        right
+        type:"engineValue"
+        left:left,
+        right:right
       };
       socket.send(JSON.stringify(obj));
     }

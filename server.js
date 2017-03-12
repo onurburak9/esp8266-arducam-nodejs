@@ -64,7 +64,8 @@ wsServer.on('request', function(request) {
     if (request.origin == "http://rcteer.swastibhat.com")
         clients.push(connection);
     connection.on('message', function(message) {
-        console.log(message);
+        var msg = JSON.parse(message);
+        console.log(msg);
         if (message.type === 'utf8') {
             // console.log('1-Received Message: ' + message.utf8Data);
             //requestObject.write("--frame\r\n");
