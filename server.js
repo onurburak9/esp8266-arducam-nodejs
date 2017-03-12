@@ -68,7 +68,7 @@ wsServer.on('request', function(request) {
     if (request.origin == "http://rcteer.swastibhat.com") {
         clients.push(connection);
         browserClient = connection;
-    } else{
+    } else {
         espClient = connection;
     }
 
@@ -93,14 +93,14 @@ wsServer.on('request', function(request) {
 
     });
     espClient.on('message', function(message) {
-            console.log(message);
-            if (message.type === 'utf8') {
+        console.log(message);
+        if (message.type === 'utf8') {
 
-                for (var i = 0; i < clients.length; i++) {
-                    clients[i].sendUTF(message.utf8Data);
-                }
-
+            for (var i = 0; i < clients.length; i++) {
+                clients[i].sendUTF(message.utf8Data);
             }
+
+
         } else if (message.type === 'binary') {
 
             for (var i = 0; i < clients.length; i++) {
@@ -112,7 +112,8 @@ wsServer.on('request', function(request) {
         }
 
 
-    }); connection.on('close', function(reasonCode, description) {
-    console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
-});
+    });
+    connection.on('close', function(reasonCode, description) {
+        console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
+    });
 });
