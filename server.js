@@ -41,8 +41,8 @@ app.get('/getValues', function(req, res) {
         });
     else
         res.send({
-            left: 50,
-            right: 50
+            left: 0,
+            right: 0
         });
 });
 app.get('/reset', function(req, res) {
