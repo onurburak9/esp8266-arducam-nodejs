@@ -20,17 +20,17 @@ $(document).ready(function() {
 
 
   $("a.start").click(function() {
-    var obj={
-      type:"engine",
-      cmd:"start"
+    var obj = {
+      type: "engine",
+      cmd: "start"
     };
     socket.send(JSON.stringify(obj));
   });
   $("a.stop").click(function() {
-    move(0,0);
-    var obj={
-      type:"engine",
-      cmd:"stop"
+    move(0, 0);
+    var obj = {
+      type: "engine",
+      cmd: "stop"
     };
     socket.send(JSON.stringify(obj));
   });
@@ -64,9 +64,9 @@ $(document).ready(function() {
     if (lastMove + 200 < now) {
       lastMove = now;
       var obj = {
-        type:"engineValue",
-        left:left,
-        right:right
+        type: "engineValue",
+        left: left,
+        right: right
       };
       socket.send(JSON.stringify(obj));
     }
@@ -92,11 +92,11 @@ $(document).ready(function() {
       }
     }
     if (Math.abs(left) > 100 || Math.abs(right) > 100) {
-      if(left<-1023){
-        left=-1023;
+      if (left < -1023) {
+        left = -1023;
       }
-      if(right<-1023){
-        right=-1023;
+      if (right < -1023) {
+        right = -1023;
       }
       move(left, right);
     }
@@ -105,50 +105,49 @@ $(document).ready(function() {
     document.getElementById("vector").innerHTML = direction;
   }
 });
- function connect() {
 
-   window.WebSocket = window.WebSocket || window.MozWebSocket;
-   var url=$("#cameraIP").val();
-   socket = new WebSocket(url);
-   socket.addEventListener("open", function(event) {
-     console.log("Connected");
-   });
+function connect() {
+  window.WebSocket = window.WebSocket || window.MozWebSocket;
+  var url = $("#cameraIP").val();
+  socket = new WebSocket(url);
+  socket.addEventListener("open", function(event) {
+    console.log("Connected");
 
-   // Display messages received from the server
-   socket.addEventListener("message", function(event) {
-     console.log(typeof event.data);
-     console.log(event.data);
+    $('a.disabled').removeClass("disabled", false);
+  });
 
-     var urlObj = window.URL || window.webkitURL;
-     //var imageUrl = urlCreator.createObjectURL(event.data);
-     if (typeof event.data != "string") {
-       var blob = event.data;
-       var url = window.URL.createObjectURL(blob);
-       console.log(blob);
-       console.log('Created a png blob of size: ' + blob.size);
-       console.log('Inserting an img...');
-       document.querySelector("#image").src = url;
-       document.querySelector("#image").onload = function(){
+  // Display messages received from the server
+  socket.addEventListener("message", function(event) {
+    console.log(typeof event.data);
+    console.log(event.data);
+
+    var urlObj = window.URL || window.webkitURL;
+    //var imageUrl = urlCreator.createObjectURL(event.data);
+    if (typeof event.data != "string") {
+      var blob = event.data;
+      var url = window.URL.createObjectURL(blob);
+      console.log(blob);
+      console.log('Created a png blob of size: ' + blob.size);
+      console.log('Inserting an img...');
+      document.querySelector("#image").src = url;
+      document.querySelector("#image").onload = function() {
         window.URL.revokeObjectURL(this.src);
-       }
+      }
 
-       console.log('Blob URL is: ' + url);
-
-      
-     }
-
-   });
-
-   // Display any errors that occur
-   socket.addEventListener("error", function(event) {
-     console.log("Error: " + event);
-   });
-
-   socket.addEventListener("close", function(event) {
-     open.disabled = false;
-     console.log("Not Connected");
-   });
- };
+      console.log('Blob URL is: ' + url);
 
 
+    }
 
+  });
+
+  // Display any errors that occur
+  socket.addEventListener("error", function(event) {
+    console.log("Error: " + event);
+  });
+
+  socket.addEventListener("close", function(event) {
+    open.disabled = false;
+    console.log("Not Connected");
+  });
+};

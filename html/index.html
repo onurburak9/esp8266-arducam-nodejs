@@ -5,15 +5,25 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="msapplication-tap-highlight" content="no">
     <title>Arducam Mini + ESP8266 Video Demo</title>
-    <!-- Compiled and minified CSS -->
-    <link rel="stylesheet" href="materialize/css/materialize.min.css">
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     <!-- Compiled and minified JavaScript -->
     <script src="materialize/js/jquery-2.1.1.min.js"></script>
-    <script src="materialize/js/materialize.min.js"></script>
     <script type="text/javascript" src="scriptCarEngine.js"></script>
     <style>
     body {overflow-x: hidden; font-family: "";}
     .left,.right{float: none !important;}
+    .btn{margin-bottom: 15px}
+    nav{margin-bottom: 30px}
+    .buttons{margin-top: 30px}
+    a.disabled{cursor: not-allowed;
+    filter: alpha(opacity=65);
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    opacity: .65;
+}}
     </style>
   </head>
   <body>
@@ -21,40 +31,44 @@
       <div class="row">
         <nav>
           <div class="nav-wrapper">
-            <div class="brand-logo center">RCTEER FANTASTIC CAR</div>
+            <h3 class="text-center">Camera On Wheels</h3>
           </div>
         </nav>
       </div>
     </div>
-    <div class="row center">
+    <div class="row text-center">
       <img id="image" src="">
     </div>
     <div class="container">
       <div class="row">
-        <div class="input-field col s12 m4 offset-m4">
+        <div class="col-md-4 col-md-offset-4 ">
           <input id="cameraIP" type="text" class="validate" value="ws://rcteer.swastibhat.com:8081">
           <label for="cameraIP">CAR IP Address</label>
         </div>
       </div>
-      <div class="row center">
-        <span class="red accent-3">
+      <div class="row">
+        <span class="red accent-3 col-md-4 col-md-offset-4 ">
           If no response, please check the <b>CAR IP Address</b> above.
         </span>
       </div>
-      <div  class="row center">
-        <p>
-          <a class="waves-effect waves-light btn open" onclick="connect()">System Start</a>
+      <div  class="row text-center buttons">
+        <p class="text-center">
+          <a class="btn btn-default" onclick="connect()">START SYSTEM</a>
         </p>
-        <p>
-          <a href="#" class="start toggle">ENGINE START</a>
-          <a href="#" class="stop toggle">ENGINE STOP</a>
+        <p class="text-center">
+          <a href="#" class="btn btn-success start toggle disabled">ENGINE START</a>
+          <a href="#" class="btn btn-danger stop toggle disabled">ENGINE STOP</a>
         </p>
-        <p>
-          <a href="#" class="forward">FORWARD</a>
-          <a href="#" class="back">BACK</a>
-          <a href="#" class="left">LEFT</a>
-          <a href="#" class="right">RIGHT</a>
+        <p class="text-center">
+          <a href="#" class="btn btn-default forward disabled">FORWARD</a>
         </p> 
+        <p class="text-center">
+          <a href="#" class="btn btn-default left disabled">LEFT</a>
+          <a href="#" class="btn btn-default right disabled">RIGHT</a>
+        </p>
+        <p class="text-center">
+          <a href="#" class="btn btn-default back disabled">BACK</a>
+        </p>
         <p>
           <span id="dmEvent"></span>
           <span id="vector"></span>
