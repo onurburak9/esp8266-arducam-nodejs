@@ -4,7 +4,9 @@ var http = require('http');
 var express = require('express');
 //set an instance of exress
 var app = express();
-
+//set an instance of parse for parsing the request header
+var parser = require('ua-parser-js');
+ 
 var viewImageResponseObject;
 var firstFrameHeaderSent = false;
 var getRequestTriggered = false;
@@ -65,10 +67,14 @@ var newFrame = "";
 var firstFrame = false;
 wsServer.on('request', function(request) {
 
-
     var connection = request.accept('', request.origin);
     console.log((new Date()) + ' Connection accepted.');
-    if (request.origin == "http://rcteer.swastibhat.com") {
+    console.log("Origin is: " + request.origin);
+   // if (request.origin === "http://rcteer.swastibhat.com") {
+   var userAgent = request.httpRequest.headers['user-agent'];
+   var ua = parser(userAgent);
+   console.log("User Agent : " + ua.browser.name);     
+   if (ua.browser.name) { 
         clients.push(connection);
         browserClient = connection;
         browserClient.on('message', function(message) {
