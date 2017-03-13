@@ -1,4 +1,5 @@
-var socket
+var socket;
+var isAccEnabled = true;
 
 $(document).ready(function() {
   var lastMove = 0;
@@ -12,11 +13,18 @@ $(document).ready(function() {
     move(-800, -800);
   });
   $("a.left").click(function() {
-    move(0, 800);
-  });
-  $("a.right").click(function() {
     move(800, 0);
   });
+  $("a.right").click(function() {
+    move(0, 800);
+  });
+  $("a.accelerator").click(function(){
+    isAccEnabled = !isAccEnabled;
+    if(isAccEnabled)
+      document.getElementById("dmEvent").innerHTML="Accelerometer enabled";
+    else
+      document.getElementById("dmEvent").innerHTML="Accelerometer disabled";
+  })
 
 
   $("a.start").click(function() {
@@ -39,6 +47,7 @@ $(document).ready(function() {
   if (window.DeviceMotionEvent) {
     window.addEventListener('devicemotion', deviceMotionHandler, false);
   } else {
+    console.log("Accelerometer not supported.")
     document.getElementById("dmEvent").innerHTML = "Accelerometer not supported."
   }
 
@@ -74,35 +83,37 @@ $(document).ready(function() {
 
 
   function deviceMotionHandler(eventData) {
-    acceleration = eventData.accelerationIncludingGravity;
-    var left = 0;
-    var right = 0;
-    if (Math.abs(acceleration.y) > 1) { // back-/forward
-      var speed = acceleration.y * 150;
-      left = Math.min(1023, speed + acceleration.x * 100);
-      right = Math.min(1023, speed - acceleration.x * 100);
-    } else if (Math.abs(acceleration.x) > 1) {
-      var speed = Math.min(1023, Math.abs(acceleration.x) * 123);
-      if (acceleration.x > 0) {
-        left = speed;
-        right = -speed;
-      } else {
-        left = -speed;
-        right = speed;
+    if (isAccEnabled) {
+      acceleration = eventData.accelerationIncludingGravity;
+      var left = 0;
+      var right = 0;
+      if (Math.abs(acceleration.y) > 1) { // back-/forward
+        var speed = acceleration.y * 150;
+        left = Math.min(1023, speed + acceleration.x * 100);
+        right = Math.min(1023, speed - acceleration.x * 100);
+      } else if (Math.abs(acceleration.x) > 1) {
+        var speed = Math.min(1023, Math.abs(acceleration.x) * 123);
+        if (acceleration.x > 0) {
+          left = speed;
+          right = -speed;
+        } else {
+          left = -speed;
+          right = speed;
+        }
       }
+      if (Math.abs(left) > 100 || Math.abs(right) > 100) {
+        if (left < -1023) {
+          left = -1023;
+        }
+        if (right < -1023) {
+          right = -1023;
+        }
+        move(left, right);
+      }
+      var direction = "stop";
+      direction = "x,y,z : [" + Math.round(acceleration.x) + "," + Math.round(acceleration.y) + "," + Math.round(acceleration.z) + "]<BR/> Left Engine : " + Math.round(left) + ", Right Engine: " + Math.round(right);
+      document.getElementById("vector").innerHTML = direction;
     }
-    if (Math.abs(left) > 100 || Math.abs(right) > 100) {
-      if (left < -1023) {
-        left = -1023;
-      }
-      if (right < -1023) {
-        right = -1023;
-      }
-      move(left, right);
-    }
-    var direction = "stop";
-    direction = "[" + Math.round(acceleration.x) + "," + Math.round(acceleration.y) + "," + Math.round(acceleration.z) + "]<BR/>" + Math.round(left) + ", " + Math.round(right);
-    document.getElementById("vector").innerHTML = direction;
   }
 });
 
