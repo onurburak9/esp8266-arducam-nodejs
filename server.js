@@ -6,7 +6,7 @@ var express = require('express');
 var app = express();
 //set an instance of parse for parsing the request header
 var parser = require('ua-parser-js');
- 
+
 var viewImageResponseObject;
 var firstFrameHeaderSent = false;
 var getRequestTriggered = false;
@@ -18,7 +18,7 @@ var isWorking = false;
 var espClient;
 var browserClient;
 /*
- *   start server
+ *   Server Creation
  */
 var server = app.listen(8081, function() {
     var host = server.address().address
@@ -29,13 +29,7 @@ var server = app.listen(8081, function() {
 //-- serves static files
 app.use('/', express.static("html"));
 
-app.get('/viewImage', function(request, response) {
-    console.log("Request received from : /viewImage");
-    response.setHeader("content-Type", "multipart/x-mixed-replace; boundary=frameFRAMEframe\r\n\r\n");
-    response.useChunkedEncodingByDefault = false;
-    getRequestTriggered = true;
-    requestObject = response;
-});
+//Endpoint for getting the current values for engine 
 app.get('/getValues', function(req, res) {
     if (isWorking)
         res.send({
@@ -48,16 +42,8 @@ app.get('/getValues', function(req, res) {
             right: 0
         });
 });
-app.get('/reset', function(req, res) {
-    left = 0;
-    right = 0;
 
-    res.send({
-        code: 200,
-        message: 'SUCCESS'
-    });
-});
-
+//Websocket server side initialized
 wsServer = new WebSocketServer({
     httpServer: server,
     autoAcceptConnections: false
@@ -65,18 +51,21 @@ wsServer = new WebSocketServer({
 var clients = [];
 var newFrame = "";
 var firstFrame = false;
+
+//Listen function for websocket
 wsServer.on('request', function(request) {
 
     var connection = request.accept('', request.origin);
     console.log((new Date()) + ' Connection accepted.');
     console.log("Origin is: " + request.origin);
-   // if (request.origin === "http://rcteer.swastibhat.com") {
-   var userAgent = request.httpRequest.headers['user-agent'];
-   var ua = parser(userAgent);
-   console.log("User Agent : " + ua.browser.name);     
-   if (ua.browser.name) { 
+    var userAgent = request.httpRequest.headers['user-agent'];
+    var ua = parser(userAgent);
+    console.log("User Agent : " + ua.browser.name);
+    //If-control for identifying different clients for websocket, if it has a browser name that means it's not ESP8266
+    if (ua.browser.name) {
         clients.push(connection);
         browserClient = connection;
+        //browser-client listen function
         browserClient.on('message', function(message) {
             console.log(message);
             if (message.type === 'utf8') {
@@ -85,7 +74,7 @@ wsServer.on('request', function(request) {
                     isWorking = true;
                 } else if (msg.cmd == "stop") {
                     isWorking = false;
-                } else {
+                } else { //part where engine values set
                     if (msg.type == "engineValue") {
                         left = Math.round(msg.left);
                         right = Math.round(msg.right);
@@ -97,23 +86,23 @@ wsServer.on('request', function(request) {
 
 
         });
-    } else {
+    } else { // else part for ESP8266
         espClient = connection;
         espClient.on('message', function(message) {
             console.log(message);
-            if (message.type === 'utf8') {
+            if (message.type === 'utf8') { // Part where header for stream data is identified
                 if (newFrame) {
-                    for (var i = 0; i < clients.length; i++) {
+                    for (var i = 0; i < clients.length; i++) { // Function where one frame send to clients
                         clients[i].sendBytes(newFrame);
                     }
-                    newFrame="";
+                    newFrame = "";
                 }
-                for (var i = 0; i < clients.length; i++) {
+                for (var i = 0; i < clients.length; i++) { // Function where header information send to clients
                     clients[i].sendUTF(message.utf8Data);
                 }
                 firstFrame = true;
 
-            } else if (message.type === 'binary') {
+            } else if (message.type === 'binary') { // Function for creating frames and control if its completed.
 
                 if (firstFrame) {
                     newFrame = message.binaryData;

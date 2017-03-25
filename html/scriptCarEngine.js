@@ -3,8 +3,8 @@ var isAccEnabled = true;
 
 $(document).ready(function() {
   var lastMove = 0;
-  //socket connection and event
-
+  
+  //Listener for buttons
 
   $("a.forward").click(function() {
     move(800, 800);
@@ -18,12 +18,12 @@ $(document).ready(function() {
   $("a.right").click(function() {
     move(0, 800);
   });
-  $("a.accelerator").click(function(){
+  $("a.accelerator").click(function() {
     isAccEnabled = !isAccEnabled;
-    if(isAccEnabled)
-      document.getElementById("dmEvent").innerHTML="Accelerometer enabled";
+    if (isAccEnabled)
+      document.getElementById("dmEvent").innerHTML = "Accelerometer enabled";
     else
-      document.getElementById("dmEvent").innerHTML="Accelerometer disabled";
+      document.getElementById("dmEvent").innerHTML = "Accelerometer disabled";
   })
 
 
@@ -51,7 +51,7 @@ $(document).ready(function() {
     document.getElementById("dmEvent").innerHTML = "Accelerometer not supported."
   }
 
-  //For Keyboard WASD
+  //For Keyboard control - WASD
   document.onkeydown = function detectKey(event) {
     var e = event.keyCode;
     if (e == 87) { //W
@@ -68,6 +68,7 @@ $(document).ready(function() {
     }
   }
 
+  //Actual functions for movement
   function move(left, right) {
     var now = Date.now();
     if (lastMove + 200 < now) {
@@ -81,7 +82,7 @@ $(document).ready(function() {
     }
   }
 
-
+  //Accelerometer function for device control
   function deviceMotionHandler(eventData) {
     if (isAccEnabled) {
       acceleration = eventData.accelerationIncludingGravity;
@@ -117,6 +118,7 @@ $(document).ready(function() {
   }
 });
 
+//Function for creating websocket connection
 function connect() {
   window.WebSocket = window.WebSocket || window.MozWebSocket;
   var url = $("#cameraIP").val();
