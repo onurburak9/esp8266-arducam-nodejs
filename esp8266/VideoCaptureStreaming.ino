@@ -1,27 +1,37 @@
-// ArduCAM Mini demo (C)2016 Lee
-// web: http://www.ArduCAM.com
-// This program is a demo of how to use most of the functions
-// of the library with ArduCAM ESP8266 2MP camera.
-// This demo was made for ArduCAM ESP8266 OV2640 2MP Camera.
-// It can take photo and send to the Web.
-// It can take photo continuously as video streaming and send to the Web.
-// The demo sketch will do the following tasks:
-// 1. Set the camera to JEPG output mode.
-// 2. if server.on("/capture", HTTP_GET, serverCapture),it can take photo and send to the Web.
-// 3.if server.on("/stream", HTTP_GET, serverStream),it can take photo continuously as video
-//streaming and send to the Web.
+/*
+   Connects ArduCam esp8266 to node js server through WiFi Internet and sends
+   captured image data in the binary form
 
-// This program requires the ArduCAM V4.0.0 (or later) library and ArduCAM ESP8266 2MP camera
-// and use Arduino IDE 1.5.8 compiler or above
+*/
 
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
-#include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 #include <Wire.h>
 #include <ArduCAM.h>
 #include <SPI.h>
 #include "memorysaver.h"
+
+#include <Arduino.h>
+#include <WebSocketsClient.h>
+#include <Hash.h>
+
+
+
+const char* ssid = "YOUR SSID";
+const char* password = "YOUR PASSWORD";
+
+
+
+char path[] = "/";
+char host[] = "rcteer.swastibhat.com";
+
+WebSocketsClient webSocket;
+#define USE_SERIAL Serial1
+WiFiClient client;
+bool isConnected = false;
+
+
 #if !(defined ESP8266 )
 #error Please select the ArduCAM ESP8266 UNO board in the Tools/Board
 #endif
@@ -33,22 +43,6 @@
 // set GPIO16 as the slave select :
 const int CS = 16;
 
-//you can change the value of wifiType to select Station or AP mode.
-//Default is AP mode.
-int wifiType = 1; // 0:Station  1:AP
-
-//AP mode configuration
-//Default is arducam_esp8266.If you want,you can change the AP_aaid  to your favorite name
-const char *AP_ssid = "Onur";
-//Default is no password.If you want to set password,put your password here
-const char *AP_password = "";
-
-//Station mode you should put your ssid and password
-const char *ssid = "SCU-Guest"; // Put your SSID here
-const char *password = ""; // Put your PASSWORD here
-
-ESP8266WebServer server(80);
-
 ArduCAM myCAM(OV2640, CS);
 
 
@@ -58,7 +52,6 @@ void start_capture() {
 }
 
 void camCapture(ArduCAM myCAM) {
-  WiFiClient client = server.client();
 
   size_t len = myCAM.read_fifo_length();
   if (len >= 0x07ffff) {
@@ -71,125 +64,36 @@ void camCapture(ArduCAM myCAM) {
 
   myCAM.CS_LOW();
   myCAM.set_fifo_burst();
+  //need to uncomment required line in memorysaver.h. It defines the arducam used
 #if !(defined (ARDUCAM_SHIELD_V2) && defined (OV2640_CAM))
   SPI.transfer(0xFF);
 #endif
-  if (!client.connected()) return;
-  String response = "HTTP/1.1 200 OK\r\n";
-  response += "Content-Type: image/jpeg\r\n";
-  response += "Content-Length: " + String(len) + "\r\n\r\n";
-  server.sendContent(response);
-
-  static const size_t bufferSize = 1024;
+  //send the text which will help differentiate between each image
+  webSocket.sendTXT("--frameFRAMEframe\r\nContent-Type: image/jpeg\r\n\r\n");
+  //data will be sent to the server in chunks of 4096 bytes
+  static const size_t bufferSize = 4096;
   static uint8_t buffer[bufferSize] = {0xFF};
-
+  int index = 0;
+  //divides the image data into chunks of specified bufferSize
   while (len) {
     size_t will_copy = (len < bufferSize) ? len : bufferSize;
     SPI.transferBytes(&buffer[0], &buffer[0], will_copy);
-    if (!client.connected()) break;
-    client.write(&buffer[0], will_copy);
+    Serial.println(index, will_copy);
+    index++;
+    //Converts data into binary format
+    webSocket.sendBIN(&buffer[0], will_copy);
     len -= will_copy;
   }
 
   myCAM.CS_HIGH();
 }
 
-void serverCapture() {
-  start_capture();
-  Serial.println("CAM Capturing");
-
-  int total_time = 0;
-
-  total_time = millis();
-  while (!myCAM.get_bit(ARDUCHIP_TRIG, CAP_DONE_MASK));
-  total_time = millis() - total_time;
-  Serial.print("capture total_time used (in miliseconds):");
-  Serial.println(total_time, DEC);
-
-  total_time = 0;
-
-  Serial.println("CAM Capture Done!");
-  total_time = millis();
-  camCapture(myCAM);
-  total_time = millis() - total_time;
-  Serial.print("send total_time used (in miliseconds):");
-  Serial.println(total_time, DEC);
-  Serial.println("CAM send Done!");
-}
-
-//Header set for streaming and image parsed
-void serverStream() {
-  
-  WiFiClient client = server.client();
-  Serial.println("serverStream");
-  String response = "HTTP/1.1 200 OK\r\n";
-  response += "Content-Type: multipart/x-mixed-replace; boundary=frame\r\n\r\n";
-  server.sendContent(response);
-
-  while (1) {
-    delay(100);
-    start_capture();
-
-    while (!myCAM.get_bit(ARDUCHIP_TRIG, CAP_DONE_MASK));
-
-    size_t len = myCAM.read_fifo_length();
-    if (len >= 0x07ffff) {
-      Serial.println("Over size.");
-      continue;
-    } else if (len == 0 ) {
-      Serial.println("Size is 0.");
-      continue;
-    }
-
-    myCAM.CS_LOW();
-    myCAM.set_fifo_burst();
-#if !(defined (ARDUCAM_SHIELD_V2) && defined (OV2640_CAM))
-    SPI.transfer(0xFF);
-#endif
-    if (!client.connected()) {
-      Serial.println("Buraya girdi");
-      break;
-    }
-    response = "--frame\r\n";
-    response += "Content-Type: image/jpeg\r\n\r\n";
-    server.sendContent(response);
-
-    static const size_t bufferSize = 2048;
-    static uint8_t buffer[bufferSize] = {0xFF};
-
-    while (len) {
-      Serial.println()
-      size_t will_copy = (len < bufferSize) ? len : bufferSize;
-      SPI.transferBytes(&buffer[0], &buffer[0], will_copy);
-      if (!client.connected()) break;
-      client.write(&buffer[0], will_copy);
-      len -= will_copy;
-    }
-    myCAM.CS_HIGH();
-
-    if (!client.connected()) break;
-  }
-}
-
-void handleNotFound() {
-  String message = "Server is running!\n\n";
-  message += "URI: ";
-  message += server.uri();
-  message += "\nMethod: ";
-  message += (server.method() == HTTP_GET) ? "GET" : "POST";
-  message += "\nArguments: ";
-  message += server.args();
-  message += "\n";
-  server.send(200, "text/plain", message);
-
-  if (server.hasArg("ql")) {
-    int ql = server.arg("ql").toInt();
-    myCAM.OV2640_set_JPEG_size(ql); delay(1000);
-    Serial.println("QL change to: " + server.arg("ql"));
-  }
-}
 
 void setup() {
+
+  Serial.begin(115200);
+  delay(1000);
+
   uint8_t vid, pid;
   uint8_t temp;
 #if defined(__SAM3X8E__)
@@ -228,56 +132,83 @@ void setup() {
   //Change to JPEG capture mode and initialize the OV2640 module
   myCAM.set_format(JPEG);
   myCAM.InitCAM();
-  myCAM.OV2640_set_JPEG_size(OV2640_320x240);
+  myCAM.OV2640_set_JPEG_size(OV2640_160x120);
   myCAM.clear_fifo_flag();
 
-  if (wifiType == 0) {
-    if (!strcmp(ssid, "SSID")) {
-      Serial.println("Please set your SSID");
-      while (1);
-    }
-    if (!strcmp(password, "PASSWORD")) {
-      Serial.println("Please set your PASSWORD");
-      while (1);
-    }
-    // Connect to WiFi network
-    Serial.println();
-    Serial.println();
-    Serial.print("Connecting to ");
-    Serial.println(ssid);
-
-    WiFi.mode(WIFI_STA);
-    WiFi.begin(ssid, password);
-    while (WiFi.status() != WL_CONNECTED) {
-      delay(500);
-      Serial.print(".");
-    }
-    Serial.println("WiFi connected");
-    Serial.println("");
-    Serial.println(WiFi.localIP());
-  } else if (wifiType == 1) {
-    Serial.println();
-    Serial.println();
-    Serial.print("Share AP: ");
-    Serial.println(AP_ssid);
-    Serial.print("The password is: ");
-    Serial.println(AP_password);
-
-    WiFi.mode(WIFI_AP);
-    WiFi.softAP(AP_ssid, AP_password);
-    Serial.println("");
-    Serial.println(WiFi.softAPIP());
-  }
-
-  // Start the server
-  server.on("/capture", HTTP_GET, serverCapture);
-  server.on("/stream", HTTP_GET, serverStream);
-  server.onNotFound(handleNotFound);
-  server.begin();
-  Serial.println("Server started");
+  //Connect to the internet
+  connectToWifi();
 }
+
+void serverCapture() {
+  start_capture();
+  Serial.println("CAM Capturing");
+  int total_time = 0;
+  total_time = millis();
+  while (!myCAM.get_bit(ARDUCHIP_TRIG, CAP_DONE_MASK));
+  total_time = millis() - total_time;
+  Serial.print("capture total_time used (in miliseconds):");
+  Serial.println(total_time, DEC);
+  total_time = 0;
+  Serial.println("CAM Capture Done!");
+  total_time = millis();
+  camCapture(myCAM);
+  total_time = millis() - total_time;
+  Serial.print("send total_time used (in miliseconds):");
+  Serial.println(total_time, DEC);
+  Serial.println("CAM send Done!");
+}
+
 
 void loop() {
-  server.handleClient();
+  webSocket.loop();
+  //Capture and send data only if websocket has been established
+  if (isConnected)
+    serverCapture();
+}
+int x = 0;
+void webSocketEvent(WStype_t type, uint8_t * payload, size_t lenght) {
+
+  switch (type) {
+    case WStype_DISCONNECTED:
+      Serial.printf("[WSc] Disconnected!\n");
+      isConnected = false;
+      break;
+    case WStype_CONNECTED:
+      {
+        Serial.printf("[WSc] Connected to url: %s\n",  payload);
+        isConnected = true;
+      }
+      break;
+    case WStype_TEXT:
+      Serial.printf("[WSc] get text: %s\n", payload);
+      break;
+    case WStype_BIN:
+      Serial.printf("[WSc] get binary lenght: %u\n", lenght);
+      hexdump(payload, lenght);
+      break;
+  }
 }
 
+
+void connectToWifi() {
+  // We start by connecting to a WiFi network
+  Serial.println();
+  Serial.println();
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+
+  WiFi.begin(ssid, password);
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("");
+  Serial.println("WiFi connected");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+
+  webSocket.begin(host, 8081);
+  webSocket.onEvent(webSocketEvent);
+}
